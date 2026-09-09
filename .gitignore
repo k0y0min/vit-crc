@@ -1,0 +1,51 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+env/
+.venv/
+ENV/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Large Model Weights (Exceeds GitHub 100MB File Limit)
+# Note: Adapter configs, processor configs, and chat templates remain tracked
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+
+# Log files
+*.log
+pipeline.log
+
+# Scratch scripts & temporary data
+scratch/
+.pytest_cache/
