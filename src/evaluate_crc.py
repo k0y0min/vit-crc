@@ -22,6 +22,7 @@ from temperature_scaling import TemperatureScaler, compute_ece
 
 def run_evaluation(
     dataset_name: str = "pope",
+    model_id: str = "Qwen/Qwen3-VL-4B-Instruct",
     adapter_path: str = "checkpoints/qwen3vl_qlora_pope",
     output_dir: str = "results",
     n_calib: int = 400,
@@ -30,7 +31,7 @@ def run_evaluation(
 ):
     os.makedirs(output_dir, exist_ok=True)
     print(f"===========================================================", flush=True)
-    print(f"Conformal Risk Control Calibration: {dataset_name.upper()}", flush=True)
+    print(f"Conformal Risk Control Calibration: {dataset_name.upper()} ({model_id})", flush=True)
     print(f"Calibration Samples: {n_calib} | Test Samples: {n_test}", flush=True)
     print(f"===========================================================", flush=True)
 
@@ -44,7 +45,7 @@ def run_evaluation(
 
     # 2. Init model
     vlm = VLMQLoRA(
-        model_id="Qwen/Qwen3-VL-4B-Instruct",
+        model_id=model_id,
         adapter_path=adapter_path if os.path.exists(adapter_path) else None,
         load_in_4bit=True,
     )
@@ -275,6 +276,7 @@ def run_evaluation(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--model_id", type=str, default="Qwen/Qwen3-VL-4B-Instruct")
     parser.add_argument("--dataset", type=str, default="pope")
     parser.add_argument("--adapter", type=str, default="")
     parser.add_argument("--output_dir", type=str, default="results")
@@ -285,6 +287,7 @@ if __name__ == "__main__":
 
     run_evaluation(
         dataset_name=args.dataset,
+        model_id=args.model_id,
         adapter_path=args.adapter,
         output_dir=args.output_dir,
         n_calib=args.calib_samples,

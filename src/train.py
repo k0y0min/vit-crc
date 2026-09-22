@@ -81,6 +81,7 @@ def collate_fn(batch, processor, device="cuda"):
 
 def train_qlora(
     dataset_name: str = "pope",
+    model_id: str = "Qwen/Qwen3-VL-4B-Instruct",
     output_dir: str = "checkpoints/qwen3vl_qlora_pope",
     epochs: int = 1,
     batch_size: int = 2,
@@ -91,17 +92,19 @@ def train_qlora(
     os.makedirs(output_dir, exist_ok=True)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"=== Starting QLoRA Fine-Tuning ===", flush=True)
-    print(f"Dataset: {dataset_name} | Samples: {max_train_samples} | Epochs: {epochs}", flush=True)
+    print(f"Model: {model_id} | Dataset: {dataset_name} | Samples: {max_train_samples} | Epochs: {epochs}", flush=True)
     print(f"Device: {device} | Output Checkpoint: {output_dir}", flush=True)
 
     # 1. Load data
-    train_ds, calib_ds, test_ds = load_and_split_dataset(
+    train_ds, _, _ = load_and_split_dataset(
         dataset_name=dataset_name,
         max_train_samples=max_train_samples,
+        max_calib_samples=1,
+        max_test_samples=1,
     )
 
     # 2. Init model in 4-bit NF4
-    vlm = VLMQLoRA(model_id="Qwen/Qwen3-VL-4B-Instruct", load_in_4bit=True, device=device)
+    vlm = VLMQLoRA(model_id=model_id, load_in_4bit=True, device=device)
     model = vlm.setup_lora_for_training(r=16, lora_alpha=32)
     model.gradient_checkpointing_enable()
     processor = vlm.processor
@@ -165,6 +168,7 @@ def train_qlora(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--model_id", type=str, default="Qwen/Qwen3-VL-4B-Instruct")
     parser.add_argument("--dataset", type=str, default="pope")
     parser.add_argument("--output_dir", type=str, default="checkpoints/qwen3vl_qlora_pope")
     parser.add_argument("--epochs", type=int, default=1)
@@ -176,6 +180,7 @@ if __name__ == "__main__":
 
     train_qlora(
         dataset_name=args.dataset,
+        model_id=args.model_id,
         output_dir=args.output_dir,
         epochs=args.epochs,
         batch_size=args.batch_size,

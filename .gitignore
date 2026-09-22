@@ -33,6 +33,7 @@ ENV/
 *.swo
 *~
 .DS_Store
+.gradio/
 
 # Large Model Weights (Exceeds GitHub 100MB File Limit)
 # Note: Adapter configs, processor configs, and chat templates remain tracked
