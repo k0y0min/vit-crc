@@ -5,6 +5,7 @@
 [![Model](https://img.shields.io/badge/VLM-Qwen3--VL--2B%20%26%204B-blueviolet.svg)](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct)
 [![PEFT](https://img.shields.io/badge/PEFT-4--bit%20QLoRA-yellow.svg)](https://github.com/huggingface/peft)
 [![Methodology](https://img.shields.io/badge/Methodology-Conformal%20Risk%20Control-darkgreen.svg)](https://arxiv.org/abs/2208.02814)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Vision-Language Models (VLMs) achieve impressive zero-shot reasoning, but they frequently hallucinate with high confidence. In high-stakes settings—like reading invoices, answering pathology questions, or inspecting manufactured parts—deploying raw model outputs without reliability guarantees is risky.
 
@@ -113,11 +114,15 @@ python3 src/evaluate_crc.py \
     --output_dir results/2b_chartqa_qlora
 ```
 
-### 3. Interactive Web Demo
+### 3. Running Unit Tests
 ```bash
-python3 app/app.py
+pytest tests/
 ```
-Launches a Gradio interface with dynamic $\alpha$ sliders, real-time abstention triggers, and empirical calibration curves.
+
+### 4. Compiling Benchmark Results
+```bash
+python3 src/aggregate_2b_results.py
+```
 
 ---
 
@@ -125,7 +130,7 @@ Launches a Gradio interface with dynamic $\alpha$ sliders, real-time abstention 
 
 ```
 vlm-conformal-risk-control/
-├── checkpoints/             # Trained LoRA adapter weights (2B & 4B)
+├── checkpoints/             # Trained LoRA adapter configs & tokenizers (2B & 4B)
 ├── results/                 # Calibration plots, empirical risk curves & JSON logs
 ├── src/
 │   ├── crc_engine.py        # Conformal Risk Control calibration algorithm
@@ -135,10 +140,11 @@ vlm-conformal-risk-control/
 │   ├── train.py             # QLoRA fine-tuning with prompt masking
 │   ├── evaluate_crc.py      # Dual-phase calibration & test evaluation
 │   └── aggregate_2b_results.py # 2B vs. 4B metric compilation script
+├── tests/                   # Unit test suite (CRC math & temperature scaling)
 ├── run_2b_suite.sh          # Full automated 2B benchmark pipeline
-├── app/app.py               # Gradio portfolio interface
-├── Dockerfile               # Production container definition
-└── requirements.txt
+├── Dockerfile               # Evaluation & replication container
+├── requirements.txt         # Pinned dependencies
+└── LICENSE                  # MIT License
 ```
 
 ---

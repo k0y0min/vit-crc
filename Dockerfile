@@ -1,4 +1,4 @@
-# Production Dockerfile for Multimodal Conformal Risk Control (Google Cloud Run ready)
+# Container for Multimodal Conformal Risk Control evaluation & replication
 FROM python:3.10-slim
 
 # System dependencies
@@ -15,29 +15,16 @@ WORKDIR /app
 # Upgrade pip
 RUN pip install --no-cache-dir --upgrade pip
 
-# Install PyTorch (CPU wheel for Cloud Run serving or CUDA if GPU runtime selected)
-RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
-
-# Install application dependencies
-RUN pip install --no-cache-dir \
-    transformers \
-    accelerate \
-    peft \
-    gradio \
-    matplotlib \
-    seaborn \
-    pillow \
-    qwen-vl-utils
+# Install dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files
 COPY src/ /app/src/
-COPY app/ /app/app/
+COPY tests/ /app/tests/
 COPY results/ /app/results/
 COPY checkpoints/ /app/checkpoints/
 
 ENV PYTHONPATH=/app/src
-ENV PORT=8080
 
-EXPOSE 8080
-
-CMD ["python", "app/app.py"]
+CMD ["python", "src/aggregate_2b_results.py"]
